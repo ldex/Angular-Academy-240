@@ -21,6 +21,7 @@ export class ProductListComponent implements OnInit {
   mostExpensiveProduct$: Observable<Product>;
   productsNumber$: Observable<number>;
   productsTotalNumber$: Observable<number>;
+  isLastPage$: Observable<boolean>;
   errorMessage;
 
   // Pagination
@@ -88,13 +89,24 @@ export class ProductListComponent implements OnInit {
                                   .productService
                                   .productsTotalNumber$;
 
+    this.isLastPage$ = combineLatest([this.productsNumber$, this.productsTotalNumber$])
+        .pipe(
+          map(([productsNumber, productsTotalNumber]) =>
+            productsNumber >= productsTotalNumber
+          )
+        );
+
     this.mostExpensiveProduct$ = this
                                     .productService
                                     .mostExpensiveProduct$;
   }
 
   refresh() {
-    this.productService.initProducts();
-    this.router.navigateByUrl('/products'); // Self route navigation
+    this.productService.resetList();
+    this.start = 0;
+    this.end = this.productsToLoad / 2;
+    this.currentPage = 1;
+
+  //  this.router.navigateByUrl('/products'); // Self route navigation
   }
 }
