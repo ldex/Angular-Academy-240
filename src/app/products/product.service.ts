@@ -13,11 +13,17 @@ export class ProductService {
   private productsSubject = new BehaviorSubject<Product[]>([]);
   products$: Observable<Product[]> = this.productsSubject.asObservable();
   mostExpensiveProduct$: Observable<Product>;
-  productsToLoad: number = 10;
+  productsTotalNumber$: Observable<number>;
+  productsToLoad = 100;
 
   constructor(private http: HttpClient) {
     this.initProducts();
     this.initMostExpensiveProduct();
+    this.initProductsTotalNumber();
+  }
+
+  private initProductsTotalNumber() {
+    this.productsTotalNumber$ = this.http.get<number>(this.baseUrl + "count");
   }
 
   private initMostExpensiveProduct() {

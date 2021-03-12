@@ -20,6 +20,7 @@ export class ProductListComponent implements OnInit {
   products$: Observable<Product[]>;
   mostExpensiveProduct$: Observable<Product>;
   productsNumber$: Observable<number>;
+  productsTotalNumber$: Observable<number>;
   errorMessage;
 
   // Pagination
@@ -71,7 +72,10 @@ export class ProductListComponent implements OnInit {
 
     this.products$ = this
                       .productService
-                      .products$;
+                      .products$
+                      .pipe(
+                        filter(products => products.length > 0)
+                      );
 
     this.productsNumber$ = this
                             .products$
@@ -79,6 +83,10 @@ export class ProductListComponent implements OnInit {
                               map(products => products.length),
                               startWith(0)
                             );
+
+    this.productsTotalNumber$ = this
+                                  .productService
+                                  .productsTotalNumber$;
 
     this.mostExpensiveProduct$ = this
                                     .productService
